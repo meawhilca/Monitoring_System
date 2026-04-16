@@ -48,6 +48,4 @@ body {
     <a href="set_budget.php">🎯 Set Budget</a>
     <a href="categories.php">📂 Categories</a>
     <a href="reports.php">📊 Reports</a>
-    <a href="edit.php">✏️ Edit Expense</a>
-    <a href="delete.php">🗑️ Delete Expense</a>
 </div>

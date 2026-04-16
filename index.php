@@ -1,45 +1,27 @@
 <?php include 'db.php'; ?>
 <?php include 'user_sidebar.php'; ?>
 
-<div class="content">
-
-<h2>💰 Budget Reminder System</h2>
-
 <?php
 $budget = 10000;
 
-// TOTAL EXPENSES
 $result = $conn->query("SELECT SUM(amount) as total FROM expenses");
 $row = $result->fetch_assoc();
 $total = $row['total'] ?? 0;
 
-// QUOTES
 $exceededQuotes = [
     "Overspending today means financial struggle tomorrow.",
-    "A small expense today can become a big problem later.",
-    "Discipline is the bridge between goals and achievement.",
     "Control your spending before it controls you.",
-    "Budgeting is telling your money where to go, not wondering where it went.",
-    "Financial freedom starts with self-control.",
-    "Think before you spend, or regret after you spend.",
-    "Every peso saved is a step toward financial security."
+    "Think before you spend, or regret after you spend."
 ];
 
 $warningQuotes = [
     "Be careful! You're getting close to your limit.",
-    "Slow down your spending—you’re almost there.",
-    "A wise person tracks every expense.",
-    "You are approaching your budget boundary.",
-    "Pause and think before your next purchase.",
-    "Stay alert—financial discipline is key."
+    "Slow down your spending—you’re almost there."
 ];
 
 $safeQuotes = [
     "Great job! You are managing your money well.",
-    "Keep it up! Financial discipline pays off.",
-    "You are in control of your expenses.",
-    "Smart spending leads to a secure future.",
-    "Success starts with good budgeting habits."
+    "Keep it up! Financial discipline pays off."
 ];
 
 function randomQuote($arr) {
@@ -47,18 +29,127 @@ function randomQuote($arr) {
 }
 ?>
 
+<!DOCTYPE html>
+<html>
+<head>
+<title>Budget System</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f4f6f9;
+        margin: 0;
+        padding: 0;
+    }
+
+    .content {
+        max-width: 1100px;
+        margin: 30px auto;
+        background: white;
+        padding: 25px;
+        border-radius: 12px;
+        border: 2px solid #4c6a88;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    }
+
+    h2, h3 {
+        color: #4c6a88;
+    }
+
+    /* STATUS BOX */
+    .status-box {
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 15px;
+        font-weight: bold;
+    }
+
+    /* TABLE STYLE */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+
+    th {
+        background: #4c6a88;
+        color: white;
+        padding: 12px;
+        text-align: left;
+    }
+
+    td {
+        padding: 12px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    tr:hover {
+        background: #f1f5f9;
+    }
+
+    /* INPUTS */
+    input, select {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        outline: none;
+    }
+
+    input:focus, select:focus {
+        border-color: #4c6a88;
+        box-shadow: 0 0 5px rgba(76,106,136,0.3);
+    }
+
+    /* BUTTONS */
+    button {
+        background: #4c6a88;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    button:hover {
+        background: #3b556f;
+    }
+
+    a {
+        color: #4c6a88;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+    .safe { color: green; }
+    .warning { color: orange; }
+    .danger { color: red; }
+</style>
+
+</head>
+
+<body>
+
+<div class="content">
+
+<h2>💰 Budget Reminder System</h2>
+
 <?php
 if ($total > $budget) {
-    echo "<h3 style='color:red;'>⚠️ Budget Exceeded!</h3>";
-    echo "<p style='color:red;'>" . randomQuote($exceededQuotes) . "</p>";
+    echo "<div class='status-box danger'>⚠️ Budget Exceeded!<br>" . randomQuote($exceededQuotes) . "</div>";
 
 } elseif ($total > ($budget * 0.8)) {
-    echo "<h3 style='color:orange;'>⚠️ Near Budget Limit!</h3>";
-    echo "<p style='color:orange;'>" . randomQuote($warningQuotes) . "</p>";
+    echo "<div class='status-box warning'>⚠️ Near Budget Limit!<br>" . randomQuote($warningQuotes) . "</div>";
 
 } else {
-    echo "<h3 style='color:green;'>✅ You are within your budget.</h3>";
-    echo "<p style='color:green;'>" . randomQuote($safeQuotes) . "</p>";
+    echo "<div class='status-box safe'>✅ You are within your budget.<br>" . randomQuote($safeQuotes) . "</div>";
 }
 ?>
 
@@ -66,22 +157,50 @@ if ($total > $budget) {
 
 <hr>
 
-<!-- ================= CATEGORY BUDGET DISPLAY ================= -->
-<h3>📂 Category Budget Limits</h3>
+<h3>📂 Daily Category Budget</h3>
 
-<table border="1" cellpadding="10">
+<table>
 <tr>
     <th>Category</th>
-    <th>Budget Limit</th>
+    <th>Budget / Day</th>
+    <th>Spent Today</th>
+    <th>Status</th>
 </tr>
 
 <?php
+$dateToday = date("Y-m-d");
+
 $budgetResult = $conn->query("SELECT * FROM categories_budget");
 
 while ($b = $budgetResult->fetch_assoc()) {
+
+    $category = $b['category_name'];
+    $limit = $b['budget_limit'];
+
+    $spentQuery = $conn->prepare("
+        SELECT SUM(amount) as total 
+        FROM expenses 
+        WHERE category = ? AND date = ?
+    ");
+    $spentQuery->bind_param("ss", $category, $dateToday);
+    $spentQuery->execute();
+    $spentResult = $spentQuery->get_result()->fetch_assoc();
+
+    $spent = $spentResult['total'] ?? 0;
+
+    if ($spent > $limit) {
+        $status = "<span class='danger'>⚠️ Exceeded</span>";
+    } elseif ($spent > ($limit * 0.8)) {
+        $status = "<span class='warning'>⚠️ Near</span>";
+    } else {
+        $status = "<span class='safe'>✅ Safe</span>";
+    }
+
     echo "<tr>
-        <td>{$b['category_name']}</td>
-        <td>₱{$b['budget_limit']}</td>
+        <td>$category</td>
+        <td>₱$limit</td>
+        <td>₱$spent</td>
+        <td>$status</td>
     </tr>";
 }
 ?>
@@ -89,25 +208,23 @@ while ($b = $budgetResult->fetch_assoc()) {
 
 <hr>
 
-<!-- ================= ADD EXPENSE ================= -->
-<h3>Add Expense</h3>
+<h3>➕ Add Expense</h3>
 
 <form method="POST" action="add.php">
 
     Amount:
-    <input type="number" step="0.01" name="amount" required><br><br>
+    <input type="number" step="0.01" name="amount" required>
 
     Category:
     <select name="category_id" required>
         <option value="">-- Select Category --</option>
-
         <?php
-        $result = $conn->query("SELECT * FROM categories");
-        while ($row = $result->fetch_assoc()) {
+        $catResult = $conn->query("SELECT * FROM categories");
+        while ($row = $catResult->fetch_assoc()) {
             echo "<option value='{$row['id']}'>{$row['name']}</option>";
         }
         ?>
-    </select><br><br>
+    </select>
 
     Payment Method:
     <select name="payment_method" required>
@@ -116,23 +233,22 @@ while ($b = $budgetResult->fetch_assoc()) {
         <option value="Card">Card</option>
         <option value="E-Wallet">E-Wallet</option>
         <option value="Bank Transfer">Bank Transfer</option>
-    </select><br><br>
+    </select>
 
     Date:
-    <input type="date" name="date" required><br><br>
+    <input type="date" name="date" required>
 
     Description:
-    <input type="text" name="description"><br><br>
+    <input type="text" name="description">
 
-    <button type="submit">Add Expense</button>
+    <button type="submit">➕ Add Expense</button>
 </form>
 
 <hr>
 
-<!-- ================= EXPENSE LIST ================= -->
-<h3>Expense List</h3>
+<h3>📋 Expense List</h3>
 
-<table border="1" cellpadding="10">
+<table>
 <tr>
     <th>ID</th>
     <th>Amount</th>
@@ -144,12 +260,12 @@ while ($b = $budgetResult->fetch_assoc()) {
 </tr>
 
 <?php
-$result = $conn->query("SELECT * FROM expenses");
+$result = $conn->query("SELECT * FROM expenses ORDER BY date DESC");
 
 while($row = $result->fetch_assoc()) {
     echo "<tr>
         <td>{$row['id']}</td>
-        <td>{$row['amount']}</td>
+        <td>₱{$row['amount']}</td>
         <td>{$row['category']}</td>
         <td>{$row['payment_method']}</td>
         <td>{$row['date']}</td>
@@ -165,8 +281,11 @@ while($row = $result->fetch_assoc()) {
 
 <br>
 
-<a href="report.php">
+<a href="reports.php">
     <button>📊 View Report</button>
 </a>
 
 </div>
+
+</body>
+</html>

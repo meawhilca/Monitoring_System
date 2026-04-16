@@ -1,9 +1,21 @@
 <?php
 include 'db.php';
 
-$id = $_GET['id'];
+// ✅ GET ID SAFELY
+$id = $_GET['id'] ?? '';
 
-$conn->query("DELETE FROM expenses WHERE id=$id");
+if (!is_numeric($id) || $id <= 0) {
+    die("Invalid ID");
+}
 
-header("Location: index.php");
+// ✅ DELETE USING PREPARED STATEMENT
+$stmt = $conn->prepare("DELETE FROM expenses WHERE id = ?");
+$stmt->bind_param("i", $id);
+
+if ($stmt->execute()) {
+    header("Location: index.php");
+    exit;
+} else {
+    echo "Error deleting record.";
+}
 ?>

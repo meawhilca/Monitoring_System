@@ -1,60 +1,52 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
 include 'db.php';
 
-// Get ID
+// GET ID
 $id = $_GET['id'] ?? null;
 
-if (!$id) {
-    die("No ID provided.");
+// VALIDATE ID
+if (!$id || !is_numeric($id)) {
+    die("Invalid ID (missing or not numeric)");
 }
 
-// Fetch existing data
-$stmt = $conn->prepare("SELECT * FROM expenses WHERE id=?");
+// FETCH RECORD
+$stmt = $conn->prepare("SELECT * FROM expenses WHERE id = ?");
 $stmt->bind_param("i", $id);
 $stmt->execute();
-$data = $stmt->get_result()->fetch_assoc();
+$result = $stmt->get_result();
 
-if (!$data) {
-    die("Record not found.");
+if ($result->num_rows === 0) {
+    die("Invalid ID (record not found)");
 }
 
-// Update data
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+$data = $result->fetch_assoc();
+
+// UPDATE
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
     $amount = $_POST['amount'];
     $category = $_POST['category'];
-    $payment_method = $_POST['payment_method'];
+    $payment = $_POST['payment_method'];
     $date = $_POST['date'];
-    $description = $_POST['description'];
+    $desc = $_POST['description'];
 
-    $update = $conn->prepare("UPDATE expenses 
+    $update = $conn->prepare("
+        UPDATE expenses 
         SET amount=?, category=?, payment_method=?, date=?, description=? 
-        WHERE id=?");
+        WHERE id=?
+    ");
 
-    $update->bind_param("dssssi", $amount, $category, $payment_method, $date, $description, $id);
+    $update->bind_param("dssssi", $amount, $category, $payment, $date, $desc, $id);
+    $update->execute();
 
-    if ($update->execute()) {
-        header("Location: index.php");
-        exit();
-    } else {
-        echo "Error updating record.";
-    }
+    header("Location: index.php");
+    exit;
 }
 ?>
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Edit Expense</title>
-</head>
-<body>
-
-<h2>✏️ Edit Expense</h2>
+<h2>Edit Expense</h2>
 
 <form method="POST">
-    
     Amount:
     <input type="number" step="0.01" name="amount" value="<?= $data['amount'] ?>" required><br><br>
 
@@ -62,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <input type="text" name="category" value="<?= $data['category'] ?>" required><br><br>
 
     Payment Method:
-    <input type="text" name="payment_method" value="<?= $data['payment_method'] ?>"><br><br>
+    <input type="text" name="payment_method" value="<?= $data['payment_method'] ?>" required><br><br>
 
     Date:
     <input type="date" name="date" value="<?= $data['date'] ?>" required><br><br>
@@ -72,9 +64,3 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     <button type="submit">Update</button>
 </form>
-
-<br>
-<a href="index.php">⬅ Back</a>
-
-</body>
-</html>
