@@ -40,27 +40,24 @@ $result = $conn->query("SELECT * FROM categories ORDER BY id DESC");
 body {
     margin: 0;
     font-family: 'Segoe UI', sans-serif;
-    background: #f4f6f9;
+    background: radial-gradient(circle at top, #0f2027, #203a43, #2c5364);
+    color: #fff;
 }
 
-/* HEADER (same as dashboard) */
+/* HEADER */
 .header {
-    background: linear-gradient(135deg, #2c3e50, #1f2c3c);
-    color: white;
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    color: #fff;
     padding: 18px 25px;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.header h2 {
-    margin: 0;
-    font-size: 20px;
-}
-
-/* NAV */
 .nav a {
-    color: white;
+    color: #00eaff;
     margin-left: 10px;
     text-decoration: none;
     padding: 8px 12px;
@@ -69,62 +66,75 @@ body {
 }
 
 .nav a:hover {
-    background: rgba(255,255,255,0.15);
+    background: rgba(0,234,255,0.2);
+    box-shadow: 0 0 10px #00eaff;
 }
 
 /* CONTAINER */
 .container {
-    padding: 25px;
+    padding: 30px;
 }
 
-/* CARD */
+/* CARD (GLASS EFFECT) */
 .card {
-    background: white;
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-    max-width: 800px;
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(12px);
+    border-radius: 18px;
+    padding: 25px;
+    max-width: 850px;
     margin: auto;
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 0 25px rgba(0,255,255,0.08);
 }
 
 /* TITLE */
 h2 {
     margin-top: 0;
-    color: #2c3e50;
+    color: #00eaff;
 }
 
 /* FORM */
 form {
     display: flex;
     gap: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
 }
 
+/* INPUT */
 input[type="text"] {
     flex: 1;
-    padding: 10px;
-    border: 1px solid #ccc;
+    padding: 12px;
     border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: transparent;
+    color: #fff;
     outline: none;
 }
 
+input::placeholder {
+    color: rgba(255,255,255,0.5);
+}
+
 input:focus {
-    border-color: #3498db;
+    border-color: #00eaff;
+    box-shadow: 0 0 8px #00eaff;
 }
 
 /* BUTTON */
 button {
-    background: #3498db;
-    color: white;
+    background: linear-gradient(135deg, #00eaff, #00ffb3);
+    color: #000;
     border: none;
-    padding: 10px 15px;
+    padding: 12px 18px;
     border-radius: 10px;
     cursor: pointer;
+    font-weight: 600;
     transition: 0.3s;
 }
 
 button:hover {
-    background: #2980b9;
+    transform: scale(1.05);
+    box-shadow: 0 0 15px #00eaff;
 }
 
 /* TABLE */
@@ -133,41 +143,44 @@ table {
     border-collapse: collapse;
 }
 
+/* TABLE HEADER */
 th {
-    background: #2c3e50;
-    color: white;
+    background: rgba(255,255,255,0.08);
     padding: 12px;
     text-align: left;
+    color: #00eaff;
 }
 
+/* TABLE ROW */
 td {
     padding: 12px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
 tr:hover {
-    background: #f8f9fb;
+    background: rgba(255,255,255,0.05);
 }
 
 /* BADGE */
 .badge {
     display: inline-block;
-    padding: 6px 12px;
-    background: #e3f2fd;
-    color: #1e3a8a;
+    padding: 6px 14px;
+    background: rgba(0,234,255,0.2);
+    color: #00eaff;
     border-radius: 20px;
     font-weight: 600;
 }
 
 /* DELETE LINK */
 a {
-    color: #e74c3c;
+    color: #ff4d6d;
     text-decoration: none;
     font-weight: bold;
+    transition: 0.2s;
 }
 
 a:hover {
-    text-decoration: underline;
+    text-shadow: 0 0 8px #ff4d6d;
 }
 
 /* RESPONSIVE */
@@ -176,6 +189,7 @@ a:hover {
         flex-direction: column;
     }
 }
+
 </style>
 
 </head>
@@ -184,13 +198,14 @@ a:hover {
 
 <!-- HEADER (same style as index2.php) -->
 <div class="header">
-    <h2>📂 Categories</h2>
+   <h2>📂 Manage Categories</h2>
 
     <div class="nav">
-        <a href="index2.php">🏠 Home</a>
-        <a href="expenses.php">📋 Expenses</a>
-        <a href="categories.php">🏷️ Categories</a>
-        <a href="set_budget.php">💰 Budget</a>
+        <a href="dashboard.php">Home</a>
+        <a href="expenses.php">Expenses</a>
+        <a href="categories.php">Categories</a>
+        <a href="set_budget.php">Budget</a>
+        <a href="reports.php">Reports</a>
     </div>
 </div>
 

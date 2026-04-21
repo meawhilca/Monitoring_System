@@ -14,13 +14,15 @@ $result = $conn->query("SELECT * FROM expenses ORDER BY date DESC");
 body {
     margin: 0;
     font-family: 'Segoe UI', sans-serif;
-    background: #f4f6f9;
+    background: radial-gradient(circle at top, #0f2027, #203a43, #2c5364);
+    color: #fff;
 }
 
 /* HEADER */
 .header {
-    background: linear-gradient(135deg, #2c3e50, #1f2c3c);
-    color: white;
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
     padding: 18px 25px;
     display: flex;
     justify-content: space-between;
@@ -29,30 +31,28 @@ body {
 
 .header h1 {
     margin: 0;
-    font-size: 20px;
 }
 
-/* NAV BUTTONS */
+/* NAV */
 .nav {
     display: flex;
     gap: 10px;
 }
 
 .back-btn {
-
-    color: white;
+    color: #00eaff;
     padding: 8px 14px;
     border-radius: 8px;
     text-decoration: none;
-    font-size: 14px;
     transition: 0.3s;
 }
 
 .back-btn:hover {
-    background: #2980b9;
+    background: rgba(0,234,255,0.2);
+    box-shadow: 0 0 10px #00eaff;
 }
 
-/* CONTAINER */
+/* PAGE */
 .page-wrapper {
     padding: 25px;
 }
@@ -60,59 +60,66 @@ body {
 /* TITLE */
 .page-title h1 {
     margin: 0;
-    color: #2c3e50;
+    color: #00eaff;
 }
 
 .subtitle {
-    margin-top: 5px;
-    color: #7f8c8d;
+    color: rgba(255,255,255,0.7);
 }
 
-/* TABLE */
+/* TABLE CARD */
 .table-card {
     margin-top: 20px;
-    background: white;
-    border-radius: 15px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 18px;
     padding: 15px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 0 25px rgba(0,255,255,0.08);
     overflow-x: auto;
 }
 
+/* TABLE */
 table {
     width: 100%;
     border-collapse: collapse;
     min-width: 800px;
 }
 
+/* HEADER */
 thead {
-    background: #2c3e50;
-    color: white;
+    background: rgba(255,255,255,0.08);
 }
 
+th {
+    color: #00eaff;
+}
+
+/* CELLS */
 th, td {
     padding: 12px;
-    text-align: left;
     font-size: 14px;
 }
 
 tbody tr {
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
 tbody tr:hover {
-    background: #f8f9fb;
+    background: rgba(255,255,255,0.05);
 }
 
 /* AMOUNT */
 .td-amount {
     font-weight: bold;
-    color: #e74c3c;
+    color: #ff4d6d;
 }
 
 /* PAYMENT CHIP */
 .payment-chip {
-    background: #ecf0f1;
-    padding: 4px 10px;
+    background: rgba(0,234,255,0.2);
+    color: #00eaff;
+    padding: 5px 12px;
     border-radius: 20px;
     font-size: 12px;
 }
@@ -124,19 +131,28 @@ tbody tr:hover {
     border-radius: 6px;
     font-size: 13px;
     margin-right: 5px;
+    transition: 0.3s;
 }
 
 .action-edit {
-    background: #f1c40f;
-    color: #000;
+    background: rgba(241, 196, 15, 0.2);
+    color: #f1c40f;
+}
+
+.action-edit:hover {
+    box-shadow: 0 0 10px #f1c40f;
 }
 
 .action-delete {
-    background: #e74c3c;
-    color: white;
+    background: rgba(231, 76, 60, 0.2);
+    color: #ff4d6d;
 }
 
-/* FOOTER CENTER BUTTON */
+.action-delete:hover {
+    box-shadow: 0 0 10px #ff4d6d;
+}
+
+/* FOOTER */
 .footer {
     text-align: center;
     margin: 25px 0;
@@ -152,10 +168,12 @@ tbody tr:hover {
     <h1>📋 Expense List</h1>
 
     <div class="nav">
-        <a href="index2.php" class="back-btn">🏠 Home</a>
-        <a href="expenses.php" class="back-btn">📋 Expenses</a>
-        <a href="categories.php" class="back-btn">🏷️ Categories</a>
-        <a href="set_budget.php" class="back-btn">💰 Budget</a>
+        <a href="index.php" class="back-btn">Home</a>
+        <a href="dashboard.php" class="back-btn">Dashboard</a>
+        <a href="expenses.php" class="back-btn">Expenses</a>
+        <a href="categories.php" class="back-btn">Categories</a>
+        <a href="set_budget.php" class="back-btn">Budget</a>
+        <a href="reports.php" class="back-btn">Reports</a>
     </div>
 </div>
 

@@ -1,290 +1,192 @@
-<?php include 'db.php'; ?>
-<?php include 'user_sidebar.php'; ?>
-
 <?php
-$budget = 10000;
-
-$result = $conn->query("SELECT SUM(amount) as total FROM expenses");
-$row = $result->fetch_assoc();
-$total = $row['total'] ?? 0;
-
-$exceededQuotes = [
-    "Overspending today means financial struggle tomorrow.",
-    "Control your spending before it controls you.",
-    "Think before you spend, or regret after you spend."
-];
-
-$warningQuotes = [
-    "Be careful! You're getting close to your limit.",
-    "Slow down your spending—you’re almost there."
-];
-
-$safeQuotes = [
-    "Great job! You are managing your money well.",
-    "Keep it up! Financial discipline pays off."
-];
-
-function randomQuote($arr) {
-    return $arr[array_rand($arr)];
-}
+session_start();
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Budget System</title>
+<meta charset="UTF-8">
+<title>Budget Monitoring System</title>
 
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        background: #f4f6f9;
-        margin: 0;
-        padding: 0;
-    }
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: radial-gradient(circle at top, #0f2027, #203a43, #2c5364);
+    color: #fff;
+}
 
-    .content {
-        max-width: 1100px;
-        margin: 30px auto;
-        background: white;
-        padding: 25px;
-        border-radius: 12px;
-        border: 2px solid #4c6a88;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-    }
+/* NAVBAR */
+.navbar {
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 
-    h2, h3 {
-        color: #4c6a88;
-    }
+.nav-links a {
+    color: #00eaff;
+    text-decoration: none;
+    margin-left: 15px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: 0.3s;
+}
 
-    /* STATUS BOX */
-    .status-box {
-        padding: 15px;
-        border-radius: 10px;
-        margin-bottom: 15px;
-        font-weight: bold;
-    }
+.nav-links a:hover {
+    background: rgba(0,234,255,0.2);
+    box-shadow: 0 0 10px #00eaff;
+}
 
-    /* TABLE STYLE */
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 10px;
-    }
+/* HERO */
+.hero {
+    text-align: center;
+    padding: 90px 20px;
+}
 
-    th {
-        background: #4c6a88;
-        color: white;
-        padding: 12px;
-        text-align: left;
-    }
+.hero h1 {
+    font-size: 44px;
+    color: #00eaff;
+}
 
-    td {
-        padding: 12px;
-        border-bottom: 1px solid #e5e7eb;
-    }
+.hero p {
+    font-size: 18px;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 30px;
+}
 
-    tr:hover {
-        background: #f1f5f9;
-    }
+/* BUTTON */
+.btn {
+    background: linear-gradient(135deg, #00eaff, #00ffb3);
+    color: #000;
+    padding: 12px 22px;
+    text-decoration: none;
+    border-radius: 10px;
+    font-weight: bold;
+    transition: 0.3s;
+}
 
-    /* INPUTS */
-    input, select {
-        width: 100%;
-        padding: 10px;
-        margin-top: 5px;
-        margin-bottom: 10px;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        outline: none;
-    }
+.btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px #00eaff;
+}
 
-    input:focus, select:focus {
-        border-color: #4c6a88;
-        box-shadow: 0 0 5px rgba(76,106,136,0.3);
-    }
+/* FEATURES */
+.features {
+    padding: 40px 20px;
+    max-width: 1000px;
+    margin: auto;
+}
 
-    /* BUTTONS */
-    button {
-        background: #4c6a88;
-        color: white;
-        border: none;
-        padding: 10px 15px;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: 0.3s;
-    }
+.features h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #00eaff;
+}
 
-    button:hover {
-        background: #3b556f;
-    }
+/* GRID */
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+}
 
-    a {
-        color: #4c6a88;
-        text-decoration: none;
-        font-weight: bold;
-    }
+/* CARD */
+.feature {
+    background: rgba(255,255,255,0.05);
+    padding: 25px;
+    border-radius: 18px;
+    text-align: center;
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.1);
+    transition: 0.3s;
+    box-shadow: 0 0 20px rgba(0,255,255,0.08);
+}
 
-    a:hover {
-        text-decoration: underline;
-    }
+.feature:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 0 25px rgba(0,255,255,0.4);
+}
 
-    .safe { color: green; }
-    .warning { color: orange; }
-    .danger { color: red; }
+.feature h3 {
+    color: #00eaff;
+}
+
+.feature p {
+    color: rgba(255,255,255,0.7);
+}
+
+/* FOOTER */
+.footer {
+    text-align: center;
+    padding: 15px;
+    margin-top: 40px;
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(255,255,255,0.1);
+}
 </style>
 
 </head>
 
 <body>
 
-<div class="content">
+<!-- NAVBAR -->
+<div class="navbar">
+    <h2>Budget Monitoring System</h2>
 
-<h2>💰 Budget Reminder System</h2>
+    <div class="nav-links">
+        <a href="index.php">Home</a>
+        <a href="dashboard.php">Dashboard</a>
+        <a href="expenses.php">Expenses</a>
+        <a href="categories.php">Categories</a>
+        <a href="set_budget.php">Budget</a>
+        <a href="reports.php">Reports</a>
+    </div>
+</div>
 
-<?php
-if ($total > $budget) {
-    echo "<div class='status-box danger'>⚠️ Budget Exceeded!<br>" . randomQuote($exceededQuotes) . "</div>";
+<!-- HERO SECTION -->
+<div class="hero">
+    <h1>Manage Your Money Smarter 💡</h1>
+    <p>Track expenses, control your budget, and achieve financial discipline.</p>
 
-} elseif ($total > ($budget * 0.8)) {
-    echo "<div class='status-box warning'>⚠️ Near Budget Limit!<br>" . randomQuote($warningQuotes) . "</div>";
+</div>
 
-} else {
-    echo "<div class='status-box safe'>✅ You are within your budget.<br>" . randomQuote($safeQuotes) . "</div>";
-}
-?>
+<!-- FEATURES -->
+<div class="features">
+    <h2>✨ Features</h2>
 
-<h3>Total Spending: ₱<?= $total ?> / ₱<?= $budget ?></h3>
+    <div class="feature-grid">
 
-<hr>
+        <div class="feature">
+            <h3>📊 Expense Tracking</h3>
+            <p>Monitor all your daily expenses in one place.</p>
+        </div>
 
-<h3>📂 Daily Category Budget</h3>
+        <div class="feature">
+            <h3>💰 Budget Control</h3>
+            <p>Set limits and avoid overspending.</p>
+        </div>
 
-<table>
-<tr>
-    <th>Category</th>
-    <th>Budget / Day</th>
-    <th>Spent Today</th>
-    <th>Status</th>
-</tr>
+        <div class="feature">
+            <h3>📈 Reports</h3>
+            <p>Analyze your spending with clear reports.</p>
+        </div>
 
-<?php
-$dateToday = date("Y-m-d");
+        <div class="feature">
+            <h3>⚡ Real-Time Updates</h3>
+            <p>Instantly see your financial status.</p>
+        </div>
 
-$budgetResult = $conn->query("SELECT * FROM categories_budget");
+    </div>
+</div>
 
-while ($b = $budgetResult->fetch_assoc()) {
-
-    $category = $b['category_name'];
-    $limit = $b['budget_limit'];
-
-    $spentQuery = $conn->prepare("
-        SELECT SUM(amount) as total 
-        FROM expenses 
-        WHERE category = ? AND date = ?
-    ");
-    $spentQuery->bind_param("ss", $category, $dateToday);
-    $spentQuery->execute();
-    $spentResult = $spentQuery->get_result()->fetch_assoc();
-
-    $spent = $spentResult['total'] ?? 0;
-
-    if ($spent > $limit) {
-        $status = "<span class='danger'>⚠️ Exceeded</span>";
-    } elseif ($spent > ($limit * 0.8)) {
-        $status = "<span class='warning'>⚠️ Near</span>";
-    } else {
-        $status = "<span class='safe'>✅ Safe</span>";
-    }
-
-    echo "<tr>
-        <td>$category</td>
-        <td>₱$limit</td>
-        <td>₱$spent</td>
-        <td>$status</td>
-    </tr>";
-}
-?>
-</table>
-
-<hr>
-
-<h3>➕ Add Expense</h3>
-
-<form method="POST" action="add.php">
-
-    Amount:
-    <input type="number" step="0.01" name="amount" required>
-
-    Category:
-    <select name="category_id" required>
-        <option value="">-- Select Category --</option>
-        <?php
-        $catResult = $conn->query("SELECT * FROM categories");
-        while ($row = $catResult->fetch_assoc()) {
-            echo "<option value='{$row['id']}'>{$row['name']}</option>";
-        }
-        ?>
-    </select>
-
-    Payment Method:
-    <select name="payment_method" required>
-        <option value="">-- Select Payment Method --</option>
-        <option value="Cash">Cash</option>
-        <option value="Card">Card</option>
-        <option value="E-Wallet">E-Wallet</option>
-        <option value="Bank Transfer">Bank Transfer</option>
-    </select>
-
-    Date:
-    <input type="date" name="date" required>
-
-    Description:
-    <input type="text" name="description">
-
-    <button type="submit">➕ Add Expense</button>
-</form>
-
-<hr>
-
-<h3>📋 Expense List</h3>
-
-<table>
-<tr>
-    <th>ID</th>
-    <th>Amount</th>
-    <th>Category</th>
-    <th>Payment</th>
-    <th>Date</th>
-    <th>Description</th>
-    <th>Action</th>
-</tr>
-
-<?php
-$result = $conn->query("SELECT * FROM expenses ORDER BY date DESC");
-
-while($row = $result->fetch_assoc()) {
-    echo "<tr>
-        <td>{$row['id']}</td>
-        <td>₱{$row['amount']}</td>
-        <td>{$row['category']}</td>
-        <td>{$row['payment_method']}</td>
-        <td>{$row['date']}</td>
-        <td>{$row['description']}</td>
-        <td>
-           <a href='edit.php?id={$row['id']}'>Edit</a> | 
-           <a href='delete.php?id={$row['id']}'>Delete</a>
-        </td>
-    </tr>";
-}
-?>
-</table>
-
-<br>
-
-<a href="reports.php">
-    <button>📊 View Report</button>
-</a>
-
+<!-- FOOTER -->
+<div class="footer">
+    © <?php echo date("Y"); ?> Budget Monitoring System
 </div>
 
 </body>

@@ -1,6 +1,8 @@
 <?php
+session_start();
 include 'db.php';
 
+/* ===== DATA ===== */
 $result = $conn->query("SELECT * FROM expenses ORDER BY date DESC");
 
 $totalResult = $conn->query("SELECT SUM(amount) as total FROM expenses");
@@ -19,117 +21,140 @@ $categoryResult = $conn->query("
 <head>
 <title>Expense Report</title>
 
-<link rel="stylesheet" href="css/style.css">
-    
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        background: #f4f6f9;
-        margin: 0;
-        padding: 0;
-    }
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: radial-gradient(circle at top, #0f2027, #203a43, #2c5364);
+    color: #fff;
+}
 
-    .container {
-        max-width: 1000px;
-        margin: 40px auto;
-        background: white;
-        padding: 25px;
-        border-radius: 12px;
-        border: 2px solid #4c6a88; /* MAIN COLOR BORDER */
-        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-    }
+/* HEADER */
+.header {
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding: 18px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 
-    h2, h3 {
-        color: #4c6a88;
-    }
+.nav a {
+    color: #00eaff;
+    margin-left: 10px;
+    text-decoration: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: 0.3s;
+}
 
-    .summary {
-        display: flex;
-        justify-content: space-between;
-        background: #eef3f8;
-        padding: 15px;
-        border-radius: 10px;
-        margin-bottom: 20px;
-        font-weight: bold;
-        color: #333;
-    }
+.nav a:hover {
+    background: rgba(0,234,255,0.2);
+    box-shadow: 0 0 10px #00eaff;
+}
 
-    /* TABLE STYLE */
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 10px;
-    }
+/* CONTAINER */
+.container {
+    max-width: 1100px;
+    margin: 30px auto;
+    padding: 25px;
+}
 
-    th {
-        background: #4c6a88;
-        color: white;
-        padding: 12px;
-        text-align: left;
-    }
+/* CARD */
+.card {
+    background: rgba(255,255,255,0.05);
+    border-radius: 18px;
+    padding: 20px;
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 0 25px rgba(0,255,255,0.08);
+    margin-bottom: 25px;
+}
 
-    td {
-        padding: 12px;
-        border-bottom: 1px solid #e5e7eb;
-    }
+/* TITLES */
+h2 {
+    color: #00eaff;
+}
 
-    tr:hover {
-        background: #f1f5f9;
-    }
+h3 {
+    color: #00eaff;
+}
 
-    /* BUTTONS */
-    .btn {
-        display: inline-block;
-        padding: 10px 15px;
-        background: #4c6a88;
-        color: white;
-        border-radius: 8px;
-        text-decoration: none;
-        margin-right: 10px;
-        transition: 0.3s;
-    }
+/* SUMMARY */
+.summary {
+    display: flex;
+    justify-content: space-between;
+    background: rgba(0,234,255,0.1);
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
 
-    .btn:hover {
-        background: #3b556f;
-    }
+/* TABLE */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
 
-    .btn-group {
-        margin-bottom: 15px;
-    }
+th {
+    background: rgba(255,255,255,0.08);
+    color: #00eaff;
+    padding: 12px;
+    text-align: left;
+}
 
-    /* BADGE */
-    .badge {
-        display: inline-block;
-        padding: 5px 10px;
-        background: #e0ecff;
-        color: #1e3a8a;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 600;
-    }
+td {
+    padding: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
 
+tr:hover {
+    background: rgba(255,255,255,0.05);
+}
 
+/* BADGE */
+.badge {
+    display: inline-block;
+    padding: 5px 12px;
+    background: rgba(0,234,255,0.2);
+    color: #00eaff;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
 </style>
 
 </head>
 
 <body>
 
+<!-- HEADER -->
+<div class="header">
+    <h2>💰 Budget Dashboard</h2>
+    <div class="nav">
+        <a href="index.php">Home</a>
+        <a href="dashboard.php">Dashboard</a>
+        <a href="expenses.php">Expenses</a>
+        <a href="categories.php">Categories</a>
+        <a href="set_budget.php">Budget</a>
+        <a href="reports.php">Reports</a>
+    </div>
+</div>
+
 <div class="container">
 
 <h2>📊 Expense Report</h2>
 
+<!-- SUMMARY -->
 <div class="summary">
     <div>💰 Total Expenses: ₱<?php echo number_format($total, 2); ?></div>
 </div>
 
-<div class="btn-group">
-    <a href="#" class="btn">⬇ Export</a>
-    <a href="#" class="btn">🖨 Print</a>
-</div>
-
 <hr>
 
+<!-- CATEGORY TABLE -->
 <h3>📌 Expenses by Category</h3>
 <table>
     <tr>
@@ -147,8 +172,8 @@ $categoryResult = $conn->query("
 
 <hr>
 
+<!-- FULL LIST -->
 <h3>📋 Full Expense List</h3>
-
 <table>
     <tr>
         <th>ID</th>
