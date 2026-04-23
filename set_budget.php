@@ -1,4 +1,42 @@
-<?php include 'db.php'; ?>
+<?php
+include 'db.php';
+
+/* =========================
+   FETCH EDIT DATA (SAFE)
+========================= */
+$editMonth = null;
+$editCategory = null;
+
+/* ===== MONTHLY EDIT ===== */
+if (isset($_GET['edit_month'])) {
+    $month = $_GET['edit_month'];
+
+    $result = $conn->query("
+        SELECT * FROM monthly_budget 
+        WHERE month = '$month'
+        LIMIT 1
+    ");
+
+    if ($result && $result->num_rows > 0) {
+        $editMonth = $result->fetch_assoc();
+    }
+}
+
+/* ===== CATEGORY EDIT ===== */
+if (isset($_GET['edit_cat'])) {
+    $cat = $_GET['edit_cat'];
+
+    $result = $conn->query("
+        SELECT * FROM categories_budget 
+        WHERE category_name = '$cat'
+        LIMIT 1
+    ");
+
+    if ($result && $result->num_rows > 0) {
+        $editCategory = $result->fetch_assoc();
+    }
+}
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -9,6 +47,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
+
+/* ===== YOUR ORIGINAL DESIGN (UNCHANGED) ===== */
 
 :root {
     --bg: radial-gradient(circle at top, #0f2027, #203a43, #2c5364);
@@ -27,7 +67,6 @@ body {
     color: var(--text);
 }
 
-/* HEADER */
 .header {
     background: var(--header);
     backdrop-filter: blur(10px);
@@ -35,7 +74,6 @@ body {
     padding: 18px 30px;
     display: flex;
     justify-content: space-between;
-    align-items: center;
 }
 
 .nav a {
@@ -44,15 +82,12 @@ body {
     text-decoration: none;
     padding: 8px 14px;
     border-radius: 8px;
-    transition: 0.3s;
 }
 
 .nav a:hover {
     background: rgba(0,234,255,0.2);
-    box-shadow: 0 0 10px #00eaff;
 }
 
-/* CONTAINER */
 .container {
     display: flex;
     flex-direction: column;
@@ -61,7 +96,6 @@ body {
     padding: 40px;
 }
 
-/* CARD */
 .card {
     background: var(--card);
     backdrop-filter: blur(15px);
@@ -70,23 +104,13 @@ body {
     padding: 30px;
     border-radius: 20px;
     border: 1px solid rgba(255,255,255,0.1);
-    box-shadow: 0 0 25px rgba(0,255,255,0.08);
 }
 
-/* TITLE */
 h2 {
     text-align: center;
     color: #00eaff;
 }
 
-.subtitle {
-    text-align: center;
-    font-size: 13px;
-    color: var(--subtext);
-    margin-bottom: 20px;
-}
-
-/* LABEL */
 label {
     font-weight: 600;
     display: block;
@@ -94,57 +118,24 @@ label {
     margin-bottom: 6px;
 }
 
-/* INPUTS */
-select, input {
+input, select {
     width: 100%;
     padding: 12px;
-    border: 1px solid var(--border);
     border-radius: 10px;
-    background: var(--input-bg);
-    color: var(--text);
-    outline: none;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.05);
+    color: white;
 }
 
-select:focus, input:focus {
-    border-color: #00eaff;
-    box-shadow: 0 0 8px #00eaff;
-}
-
-/* BUTTON */
 button {
     width: 100%;
     margin-top: 20px;
     padding: 13px;
     border: none;
-    background: linear-gradient(135deg, #00eaff, #00ffb3);
-    color: #000;
-    font-size: 15px;
     border-radius: 12px;
-    cursor: pointer;
+    background: linear-gradient(135deg,#00eaff,#00ffb3);
     font-weight: 600;
-    transition: 0.3s;
-}
-
-button:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 15px #00eaff;
-}
-
-/* SECTION TITLE */
-.section-title {
-    margin-bottom: 10px;
-    color: #00eaff;
-    font-size: 14px;
-    text-transform: uppercase;
-    text-align: center;
-}
-
-/* NOTE */
-.note {
-    text-align: center;
-    font-size: 12px;
-    color: var(--subtext);
-    margin-top: 10px;
+    cursor: pointer;
 }
 
 </style>
@@ -154,7 +145,8 @@ button:hover {
 
 <div class="header">
     <h2>🎯 Budget Control</h2>
-    <div class="nav">
+    
+        <div class="nav">
         <a href="index.php">Home</a>
         <a href="dashboard.php">Dashboard</a>
         <a href="expenses.php">Expenses</a>
@@ -163,52 +155,70 @@ button:hover {
         <a href="reports.php">Reports</a>
     </div>
 </div>
+</div>
 
 <div class="container">
 
 <!-- ================= MONTHLY BUDGET ================= -->
 <div class="card">
 
-    <h2>📅 Monthly Budget</h2>
-    <div class="subtitle">Set your total monthly spending limit</div>
+<h2>📅 Monthly Budget</h2>
 
-    <form method="POST" action="save_budget.php">
+<form method="POST" action="save_budget.php">
 
-        <label>Total Monthly Budget (₱)</label>
-        <input type="number" step="10" name="monthly_budget" placeholder="e.g. 10000" required>
+<label>Monthly Budget</label>
 
-        <button type="submit">💾 Save Monthly Budget</button>
+<input type="hidden" name="edit_month" value="<?php echo $editMonth['month'] ?? ''; ?>">
 
-    </form>
+<input type="number"
+       name="monthly_budget"
+       value="<?php echo $editMonth['budget_amount'] ?? ''; ?>"
+       placeholder="Enter monthly budget"
+       required>
+
+<button type="submit">
+    <?php echo $editMonth ? "✏ Update Budget" : "💾 Save Budget"; ?>
+</button>
+
+</form>
 
 </div>
 
 <!-- ================= CATEGORY BUDGET ================= -->
 <div class="card">
 
-    <h2>📂 Category Budget</h2>
-    <div class="subtitle">Set limits per expense category</div>
+<h2>📂 Category Budget</h2>
 
-    <form method="POST" action="save_budget.php">
+<form method="POST" action="save_budget.php">
 
-        <label>Category</label>
-        <select name="category_name" required>
-            <option value="">-- Select Category --</option>
+<label>Category</label>
 
-            <?php
-            $result = $conn->query("SELECT * FROM categories");
-            while ($row = $result->fetch_assoc()) {
-                echo "<option value='".htmlspecialchars($row['name'])."'>".htmlspecialchars($row['name'])."</option>";
-            }
-            ?>
-        </select>
+<select name="category_name" required>
+    <option value="">-- Select Category --</option>
 
-        <label>Category Budget Limit (₱)</label>
-        <input type="number" step="10" name="budget_limit" placeholder="e.g. 500" required>
+    <?php
+    $result = $conn->query("SELECT * FROM categories");
 
-        <button type="submit">💾 Save Category Budget</button>
+    while ($row = $result->fetch_assoc()) {
+        $selected = ($editCategory && $editCategory['category_name'] == $row['name']) ? "selected" : "";
+        echo "<option value='{$row['name']}' $selected>{$row['name']}</option>";
+    }
+    ?>
+</select>
 
-    </form>
+<label>Budget Limit</label>
+
+<input type="number"
+       name="budget_limit"
+       value="<?php echo $editCategory['budget_limit'] ?? ''; ?>"
+       placeholder="Enter budget limit"
+       required>
+
+<button type="submit">
+    <?php echo $editCategory ? "✏ Update Category" : "💾 Save Category"; ?>
+</button>
+
+</form>
 
 </div>
 

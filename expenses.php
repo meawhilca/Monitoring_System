@@ -93,12 +93,22 @@ thead {
 
 th {
     color: #00eaff;
+    text-align: center;
 }
 
 /* CELLS */
 th, td {
     padding: 12px;
     font-size: 14px;
+    text-align: center;
+}
+
+/* LEFT ALIGN CATEGORY & DESCRIPTION */
+th:nth-child(3),
+th:nth-child(6),
+td:nth-child(3),
+td:nth-child(6) {
+    text-align: left;
 }
 
 tbody tr {
@@ -122,6 +132,7 @@ tbody tr:hover {
     padding: 5px 12px;
     border-radius: 20px;
     font-size: 12px;
+    display: inline-block;
 }
 
 /* ACTION BUTTONS */
@@ -165,7 +176,7 @@ tbody tr:hover {
 
 <!-- HEADER -->
 <div class="header">
-    <h1>📋 Expense List</h1>
+    <h1>Expense List</h1>
 
     <div class="nav">
         <a href="index.php" class="back-btn">Home</a>
@@ -224,13 +235,13 @@ tbody tr:hover {
 
                     <td>
                         <a href="edit.php?id=<?= $row['id'] ?>" class="action-btn action-edit">
-                            ✏️ Edit
+                            Edit
                         </a>
 
                         <a href="delete.php?id=<?= $row['id'] ?>" 
                            class="action-btn action-delete"
                            onclick="return confirm('Delete this expense?')">
-                            🗑️ Delete
+                            Delete
                         </a>
                     </td>
 
@@ -240,11 +251,6 @@ tbody tr:hover {
 
         </table>
 
-    </div>
-
-    <!-- CENTER FOOTER BUTTON -->
-    <div class="footer">
-        <a href="index2.php" class="back-btn">⬅ Back to Dashboard</a>
     </div>
 
 </div>

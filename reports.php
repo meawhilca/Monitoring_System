@@ -2,24 +2,36 @@
 session_start();
 include 'db.php';
 
-/* ===== DATA ===== */
-$result = $conn->query("SELECT * FROM expenses ORDER BY date DESC");
-
-$totalResult = $conn->query("SELECT SUM(amount) as total FROM expenses");
-$totalRow = $totalResult->fetch_assoc();
-$total = $totalRow['total'] ?? 0;
-
-$categoryResult = $conn->query("
-    SELECT category, SUM(amount) as total 
-    FROM expenses 
-    GROUP BY category
+/* ===== FETCH EXPENSES ===== */
+$result = $conn->query("
+    SELECT * FROM expenses 
+    ORDER BY date DESC
 ");
+
+/* ===== FETCH MONTHLY BUDGET ===== */
+$budgetResult = $conn->query("
+    SELECT month, budget_amount 
+    FROM monthly_budget
+");
+
+$budgets = [];
+while ($row = $budgetResult->fetch_assoc()) {
+    $budgets[$row['month']] = $row['budget_amount'];
+}
+
+/* ===== ORGANIZE EXPENSES BY MONTH ===== */
+$monthlyData = [];
+
+while ($row = $result->fetch_assoc()) {
+    $month = date('Y-m', strtotime($row['date']));
+    $monthlyData[$month][] = $row;
+}
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
-<title>Expense Report</title>
+<title>Monthly Expense Report</title>
 
 <style>
 body {
@@ -56,7 +68,7 @@ body {
 
 /* CONTAINER */
 .container {
-    max-width: 1100px;
+    max-width: 1200px;
     margin: 30px auto;
     padding: 25px;
 }
@@ -70,6 +82,12 @@ body {
     border: 1px solid rgba(255,255,255,0.1);
     box-shadow: 0 0 25px rgba(0,255,255,0.08);
     margin-bottom: 25px;
+    animation: fadeSlide 0.6s ease forwards;
+}
+
+@keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 /* TITLES */
@@ -77,8 +95,10 @@ h2 {
     color: #00eaff;
 }
 
-h3 {
+.month-title {
+    font-size: 20px;
     color: #00eaff;
+    margin-bottom: 10px;
 }
 
 /* SUMMARY */
@@ -86,9 +106,9 @@ h3 {
     display: flex;
     justify-content: space-between;
     background: rgba(0,234,255,0.1);
-    padding: 15px;
+    padding: 12px;
     border-radius: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     font-weight: bold;
 }
 
@@ -96,6 +116,7 @@ h3 {
 table {
     width: 100%;
     border-collapse: collapse;
+    margin-top: 10px;
 }
 
 th {
@@ -112,6 +133,7 @@ td {
 
 tr:hover {
     background: rgba(255,255,255,0.05);
+    transition: 0.3s;
 }
 
 /* BADGE */
@@ -132,7 +154,7 @@ tr:hover {
 
 <!-- HEADER -->
 <div class="header">
-    <h2>💰 Budget Dashboard</h2>
+    <h2>Budget Dashboard</h2>
     <div class="nav">
         <a href="index.php">Home</a>
         <a href="dashboard.php">Dashboard</a>
@@ -145,56 +167,64 @@ tr:hover {
 
 <div class="container">
 
-<h2>📊 Expense Report</h2>
+<h2>Monthly Expense Report</h2>
 
-<!-- SUMMARY -->
-<div class="summary">
-    <div>💰 Total Expenses: ₱<?php echo number_format($total, 2); ?></div>
-</div>
+<?php foreach ($monthlyData as $month => $records): ?>
 
-<hr>
+<div class="card">
 
-<!-- CATEGORY TABLE -->
-<h3>📌 Expenses by Category</h3>
-<table>
-    <tr>
-        <th>Category</th>
-        <th>Total Amount</th>
-    </tr>
+    <!-- MONTH TITLE -->
+    <div class="month-title">
+        <?php echo date("F Y", strtotime($month)); ?>
+    </div>
 
-    <?php while($row = $categoryResult->fetch_assoc()) { ?>
+    <?php 
+    $monthlyTotal = 0;
+    foreach ($records as $row) {
+        $monthlyTotal += $row['amount'];
+    }
+
+    $budget = $budgets[$month] ?? 0;
+    $remaining = $budget - $monthlyTotal;
+    ?>
+
+    <!-- SUMMARY -->
+    <div class="summary">
+        <div>Monthly Budget: ₱<?php echo number_format($budget, 2); ?></div>
+        <div>Total Expenses: ₱<?php echo number_format($monthlyTotal, 2); ?></div>
+        <div>
+            <?php if ($remaining >= 0): ?>
+                Remaining: ₱<?php echo number_format($remaining, 2); ?>
+            <?php else: ?>
+                Over: ₱<?php echo number_format(abs($remaining), 2); ?>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <table>
         <tr>
-            <td><span class="badge"><?php echo $row['category']; ?></span></td>
-            <td>₱<?php echo number_format($row['total'], 2); ?></td>
+            <th>Date</th>
+            <th>Category</th>
+            <th>Amount</th>
+            <th>Payment</th>
+            <th>Description</th>
         </tr>
-    <?php } ?>
-</table>
 
-<hr>
-
-<!-- FULL LIST -->
-<h3>📋 Full Expense List</h3>
-<table>
-    <tr>
-        <th>ID</th>
-        <th>Amount</th>
-        <th>Category</th>
-        <th>Payment Method</th>
-        <th>Date</th>
-        <th>Description</th>
-    </tr>
-
-    <?php while($row = $result->fetch_assoc()) { ?>
+        <?php foreach ($records as $row): ?>
         <tr>
-            <td><?php echo $row['id']; ?></td>
-            <td>₱<?php echo number_format($row['amount'], 2); ?></td>
+            <td><?php echo date("M d, Y", strtotime($row['date'])); ?></td>
             <td><span class="badge"><?php echo $row['category']; ?></span></td>
+            <td>₱<?php echo number_format($row['amount'], 2); ?></td>
             <td><?php echo $row['payment_method']; ?></td>
-            <td><?php echo $row['date']; ?></td>
             <td><?php echo $row['description']; ?></td>
         </tr>
-    <?php } ?>
-</table>
+        <?php endforeach; ?>
+
+    </table>
+
+</div>
+
+<?php endforeach; ?>
 
 </div>
 
