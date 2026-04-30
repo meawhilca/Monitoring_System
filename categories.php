@@ -201,7 +201,8 @@ a:hover {
    <h2>📂 Manage Categories</h2>
 
     <div class="nav">
-        <a href="dashboard.php">Home</a>
+        <a href="index.php">Home</a>
+        <a href="dashboard.php">Dashboard</a>
         <a href="expenses.php">Expenses</a>
         <a href="categories.php">Categories</a>
         <a href="set_budget.php">Budget</a>
