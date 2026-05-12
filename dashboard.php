@@ -20,8 +20,17 @@ $budgetRow = $res->fetch_assoc();
 $budget = $budgetRow['budget_amount'] ?? 0;
 
 /* ===== EXPENSE TOTAL ===== */
-$result = $conn->query("SELECT SUM(amount) as total FROM expenses");
-$row = $result->fetch_assoc();
+$stmt = $conn->prepare("
+    SELECT SUM(amount) as total 
+    FROM expenses 
+    WHERE DATE_FORMAT(date, '%Y-%m') = ?
+");
+
+$stmt->bind_param("s", $month);
+$stmt->execute();
+$res = $stmt->get_result();
+
+$row = $res->fetch_assoc();
 $total = $row['total'] ?? 0;
 
 /* ===== CALCULATIONS ===== */
