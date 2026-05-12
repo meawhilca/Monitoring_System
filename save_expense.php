@@ -1,6 +1,3 @@
-# save_expense.php
-
-```php
 <?php
 include 'db.php';
 
@@ -23,13 +20,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Insert expense
     $stmt = $conn->prepare("INSERT INTO expenses (amount, category, payment_method, date, description) VALUES (?, ?, ?, ?, ?)");
-    $stmt->bind_param("dssss", $amount, $category, $payment_method, $date, $desc);
 
-    if ($stmt->execute()) {
-        $message = "Expense added successfully!";
-        $status = "success";
+    if ($stmt) {
+
+        $stmt->bind_param("dssss", $amount, $category, $payment_method, $date, $desc);
+
+        if ($stmt->execute()) {
+            $message = "Expense added successfully!";
+            $status = "success";
+        } else {
+            $message = "Failed to save expense.";
+            $status = "error";
+        }
+
+        $stmt->close();
+
     } else {
-        $message = "Failed to save expense.";
+        $message = "Database prepare failed.";
         $status = "error";
     }
 }
@@ -103,14 +110,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <div class="container">
 
-    <?php if($status == 'success'): ?>
-        <div class="success">
-            <?php echo $message; ?>
-        </div>
-    <?php else: ?>
-        <div class="error">
-            <?php echo $message; ?>
-        </div>
+    <?php if ($message != ""): ?>
+
+        <?php if ($status == 'success'): ?>
+            <div class="success">
+                <?php echo $message; ?>
+            </div>
+        <?php else: ?>
+            <div class="error">
+                <?php echo $message; ?>
+            </div>
+        <?php endif; ?>
+
     <?php endif; ?>
 
     <a href="index.php" class="btn">Back to Dashboard</a>
@@ -119,4 +130,3 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 </body>
 </html>
-
