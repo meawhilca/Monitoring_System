@@ -18,7 +18,6 @@ body {
     color: #fff;
 }
 
-/* HEADER */
 .header {
     background: rgba(255,255,255,0.05);
     backdrop-filter: blur(10px);
@@ -29,45 +28,42 @@ body {
     align-items: center;
 }
 
-.header h1 {
+.header h2 {
     margin: 0;
+    color: #00eaff;
 }
 
-/* NAV */
 .nav {
     display: flex;
     gap: 10px;
+    flex-wrap: wrap;
 }
 
-.back-btn {
+.nav a {
     color: #00eaff;
+    text-decoration: none;
     padding: 8px 14px;
     border-radius: 8px;
-    text-decoration: none;
-    transition: 0.3s;
 }
 
-.back-btn:hover {
+.nav a:hover {
     background: rgba(0,234,255,0.2);
     box-shadow: 0 0 10px #00eaff;
 }
 
-/* PAGE */
 .page-wrapper {
     padding: 25px;
 }
 
-/* TITLE */
-.page-title h1 {
-    margin: 0;
-    color: #00eaff;
+.add-btn {
+    background: linear-gradient(135deg,#00eaff,#00bcd4);
+    color: #000;
+    padding: 12px 18px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: bold;
 }
 
-.subtitle {
-    color: rgba(255,255,255,0.7);
-}
-
-/* TABLE CARD */
 .table-card {
     margin-top: 20px;
     background: rgba(255,255,255,0.05);
@@ -75,98 +71,53 @@ body {
     padding: 15px;
     backdrop-filter: blur(12px);
     border: 1px solid rgba(255,255,255,0.1);
-    box-shadow: 0 0 25px rgba(0,255,255,0.08);
     overflow-x: auto;
 }
 
-/* TABLE */
 table {
     width: 100%;
     border-collapse: collapse;
     min-width: 800px;
 }
 
-/* HEADER */
 thead {
     background: rgba(255,255,255,0.08);
 }
 
 th {
     color: #00eaff;
-    text-align: center;
 }
 
-/* CELLS */
 th, td {
     padding: 12px;
-    font-size: 14px;
     text-align: center;
+    font-size: 14px;
 }
 
-/* LEFT ALIGN CATEGORY & DESCRIPTION */
-th:nth-child(3),
-th:nth-child(6),
-td:nth-child(3),
-td:nth-child(6) {
-    text-align: left;
-}
-
-tbody tr {
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-}
-
-tbody tr:hover {
-    background: rgba(255,255,255,0.05);
-}
-
-/* AMOUNT */
 .td-amount {
-    font-weight: bold;
     color: #ff4d6d;
+    font-weight: bold;
 }
 
-/* PAYMENT CHIP */
 .payment-chip {
     background: rgba(0,234,255,0.2);
     color: #00eaff;
     padding: 5px 12px;
     border-radius: 20px;
-    font-size: 12px;
-    display: inline-block;
 }
 
-/* ACTION BUTTONS */
-.action-btn {
-    text-decoration: none;
-    padding: 6px 10px;
-    border-radius: 6px;
-    font-size: 13px;
-    margin-right: 5px;
-    transition: 0.3s;
+.month-header {
+    background: rgba(0,234,255,0.15);
+    color: #00eaff;
+    font-weight: bold;
 }
 
-.action-edit {
-    background: rgba(241, 196, 15, 0.2);
-    color: #f1c40f;
-}
-
-.action-edit:hover {
-    box-shadow: 0 0 10px #f1c40f;
-}
-
-.action-delete {
-    background: rgba(231, 76, 60, 0.2);
-    color: #ff4d6d;
-}
-
-.action-delete:hover {
-    box-shadow: 0 0 10px #ff4d6d;
-}
-
-/* FOOTER */
-.footer {
-    text-align: center;
-    margin: 25px 0;
+.month-total {
+    text-align: right;
+    padding: 10px;
+    color: #00ffcc;
+    font-weight: bold;
+    background: rgba(0,0,0,0.3);
 }
 </style>
 
@@ -176,95 +127,97 @@ tbody tr:hover {
 
 <!-- HEADER -->
 <div class="header">
-    <h1>Expense List</h1>
-
+    <h2>Budget Dashboard</h2>
     <div class="nav">
-        <a href="index.php" class="back-btn">Home</a>
-        <a href="dashboard.php" class="back-btn">Dashboard</a>
-        <a href="expenses.php" class="back-btn">Expenses</a>
-        <a href="categories.php" class="back-btn">Categories</a>
-        <a href="set_budget.php" class="back-btn">Budget</a>
-        <a href="reports.php" class="back-btn">Reports</a>
+        <a href="index.php">Home</a>
+        <a href="dashboard.php">Dashboard</a>
+        <a href="expenses.php">Expenses</a>
+        <a href="categories.php">Categories</a>
+        <a href="set_budget.php">Budget</a>
+        <a href="reports.php">Reports</a>
     </div>
 </div>
 
-<!-- CONTENT -->
 <div class="page-wrapper">
 
-    <div class="page-title">
-
-    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px;">
-        
-        <div>
-            <h1>All Expenses</h1>
-            <p class="subtitle">View and manage all recorded expenses</p>
-        </div>
-
-        <!-- ADD EXPENSE BUTTON -->
-        <a href="save_expense.php" class="add-btn">
-            + Add Expense
-        </a>
-
-    </div>
-
+<div style="display:flex; justify-content:space-between; align-items:center; margin-top:20px;">
+    <h1 style="color:#00eaff;">All Expenses</h1>
+    <a href="add_expense.php" class="add-btn">+ Add Expense</a>
 </div>
 
-    <div class="table-card">
+<div class="table-card">
 
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Amount</th>
-                    <th>Category</th>
-                    <th>Payment</th>
-                    <th>Date</th>
-                    <th>Description</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
+<table>
+<thead>
+<tr>
+    <th>ID</th>
+    <th>Amount</th>
+    <th>Category</th>
+    <th>Payment</th>
+    <th>Date</th>
+    <th>Description</th>
+</tr>
+</thead>
 
-            <tbody>
-                <?php while($row = $result->fetch_assoc()): ?>
-                <tr>
+<tbody>
 
-                    <td>#<?= htmlspecialchars($row['id']) ?></td>
+<?php
+$currentMonth = "";
+$monthlyTotal = 0;
 
-                    <td class="td-amount">
-                        ₱<?= number_format($row['amount'], 2) ?>
-                    </td>
+while($row = $result->fetch_assoc()):
 
-                    <td><?= htmlspecialchars($row['category']) ?></td>
+$month = date("F Y", strtotime($row['date']));
 
-                    <td>
-                        <span class="payment-chip">
-                            <?= htmlspecialchars($row['payment_method']) ?>
-                        </span>
-                    </td>
+if ($month != $currentMonth):
 
-                    <td><?= htmlspecialchars($row['date']) ?></td>
+    if ($currentMonth != ""):
+?>
+<tr>
+    <td colspan="6" class="month-total">
+        💰 Monthly Total (<?= $currentMonth ?>): ₱<?= number_format($monthlyTotal, 2) ?>
+    </td>
+</tr>
+<?php
+    endif;
 
-                    <td><?= htmlspecialchars($row['description'] ?: '—') ?></td>
+    $currentMonth = $month;
+    $monthlyTotal = 0;
+?>
 
-                    <td>
-                        <a href="edit.php?id=<?= $row['id'] ?>" class="action-btn action-edit">
-                            Edit
-                        </a>
+<tr>
+    <td colspan="6" class="month-header">📅 <?= $month ?></td>
+</tr>
 
-                        <a href="delete.php?id=<?= $row['id'] ?>" 
-                           class="action-btn action-delete"
-                           onclick="return confirm('Delete this expense?')">
-                            Delete
-                        </a>
-                    </td>
+<?php endif;
 
-                </tr>
-                <?php endwhile; ?>
-            </tbody>
+$monthlyTotal += $row['amount'];
+?>
 
-        </table>
+<tr>
+    <td>#<?= $row['id'] ?></td>
+    <td class="td-amount">₱<?= number_format($row['amount'], 2) ?></td>
+    <td><?= $row['category'] ?></td>
+    <td><span class="payment-chip"><?= $row['payment_method'] ?></span></td>
+    <td><?= $row['date'] ?></td>
+    <td><?= $row['description'] ?: '—' ?></td>
+</tr>
 
-    </div>
+<?php endwhile; ?>
+
+<!-- ✅ FINAL MONTH TOTAL FIX -->
+<?php if ($currentMonth != ""): ?>
+<tr>
+    <td colspan="6" class="month-total">
+        💰 Monthly Total (<?= $currentMonth ?>): ₱<?= number_format($monthlyTotal, 2) ?>
+    </td>
+</tr>
+<?php endif; ?>
+
+</tbody>
+</table>
+
+</div>
 
 </div>
 
