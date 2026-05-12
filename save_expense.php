@@ -119,19 +119,4 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 </body>
 </html>
-```
-
-## Change your form action
-
-In your `add.php`, change:
-
-```html
-<form action="add.php" method="POST">
-```
-
-to:
-
-```html
-<form action="save_expense.php" method="POST">
-```
 
