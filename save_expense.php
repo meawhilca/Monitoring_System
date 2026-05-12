@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <?php
 include 'db.php';
 
@@ -130,3 +131,5 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 </body>
 </html>
+=======
+>>>>>>> f1806662e0d9088bd6a11243f49ed7d14a75c6df

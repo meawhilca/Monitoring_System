@@ -192,9 +192,22 @@ tbody tr:hover {
 <div class="page-wrapper">
 
     <div class="page-title">
-        <h1>All Expenses</h1>
-        <p class="subtitle">View and manage all recorded expenses</p>
+
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px;">
+        
+        <div>
+            <h1>All Expenses</h1>
+            <p class="subtitle">View and manage all recorded expenses</p>
+        </div>
+
+        <!-- ADD EXPENSE BUTTON -->
+        <a href="save_expense.php" class="add-btn">
+            + Add Expense
+        </a>
+
     </div>
+
+</div>
 
     <div class="table-card">
 
